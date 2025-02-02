@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Interactive Storybook</title>
+  <style>
+    body {
+      font-family: sans-serif;
+    }
+    #story {
+      text-align: justify;
+    }
+    button {
+      padding: 10px 20px;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <div id="story">
+    <h1>The Adventure Begins</h1>
+    <p>You wake up in a dark forest. You can hear the rustling of leaves and the chirping of birds. There are two paths in front of you: one leads to a sparkling lake, the other to a towering mountain.</p>
+    <button onclick="choosePath('lake')">Go to the lake</button>
+    <button onclick="choosePath('mountain')">Go to the mountain</button>
+  </div>
+  <script>
+    function choosePath(path) {
+      if (path === 'lake') {
+        document.getElementById('story').innerHTML = 'You arrive at a beautiful lake. The water is crystal clear and you see a small boat tied to a dock. Do you want to take the boat?';
+        document.getElementById('story').innerHTML += '<button onclick="chooseAction(\'takeBoat\')">Take the boat</button>';
+        document.getElementById('story').innerHTML += '<button onclick="chooseAction(\'stay\')">Stay on the shore</button>';
+      } else if (path === 'mountain') {
+        document.getElementById('story').innerHTML = 'You climb the steep mountain path. The air gets thinner as you ascend. You reach a cave at the top. Do you want to enter the cave?';
+        document.getElementById('story').innerHTML += '<button onclick="chooseAction(\'enterCave\')">Enter the cave</button>';
+        document.getElementById('story').innerHTML += '<button onclick="chooseAction(\'turnBack\')">Turn back</button>';
+      }
+    }
+
+    function chooseAction(action) {
+      // Add more story logic here based on user choices
+    }
+  </script>
+</body>
+</html>

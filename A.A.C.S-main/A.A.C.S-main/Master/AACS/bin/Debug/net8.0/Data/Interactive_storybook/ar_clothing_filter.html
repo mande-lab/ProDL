@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>AR Clothing Filter</title>
+  <script src="https://threejs.org/build/three.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three-ar-toolkit@0.1.0/dist/three-ar-toolkit.min.js"></script>
+  <script src="script.js"></script>
+</head>
+<body>
+  <script>
+    // Initialize AR scene
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+    const renderer = new THREE.WebGLRenderer({ antialias: true });
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    document.body.appendChild(renderer.domElement);
+
+    // Load clothing model
+    const loader = new THREE.GLTFLoader();
+    loader.load('clothing_model.glb', (gltf) => {
+      const clothing = gltf.scene;
+      scene.add(clothing);
+    });
+
+    // Initialize ARToolkit
+    const arToolkit = new ARToolkit({
+      camera: camera,
+      renderer: renderer,
+      scene: scene
+    });
+
+    // ... (Add logic for handling user interaction and clothing placement)
+
+    // Render loop
+    function animate() {
+      requestAnimationFrame(animate);
+      arToolkit.update();
+      renderer.render(scene, camera);
+    }
+    animate();
+  </script>
+</body>
+</html>

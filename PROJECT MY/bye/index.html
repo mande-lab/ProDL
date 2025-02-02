@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hangman Game - Bye</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .game-container {
+            background-color: #ffffff;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            width: 480px;
+            text-align: center;
+            margin: auto;
+        }
+
+        .difficulty-selector,
+        .score-container {
+            margin: 20px 0;
+        }
+
+        .difficulty-selector select {
+            padding: 10px;
+            font-size: 16px;
+            border-radius: 5px;
+        }
+
+        .message-container {
+            margin-top: 20px;
+            font-size: 20px;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+
+        .hint-container {
+            margin-top: 15px;
+            font-size: 18px;
+            color: #34495e;
+        }
+
+        .hint-button {
+            margin-top: 10px;
+            padding: 10px;
+            font-size: 16px;
+            background-color: #e74c3c;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .hint-button:hover {
+            background-color: #c0392b;
+        }
+
+        .sound-container {
+            margin-top: 20px;
+        }
+
+        .sound-toggle {
+            padding: 8px;
+            background-color: #3498db;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .sound-toggle:active {
+            background-color: #2980b9;
+        }
+
+        .score-container p {
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        .game-theme-dark {
+            background-color: #2c3e50;
+            color: white;
+        }
+
+        .game-theme-light {
+            background-color: #ecf0f1;
+            color: black;
+        }
+
+        #letters button {
+            padding: 10px;
+            margin: 5px;
+            font-size: 16px;
+            background-color: #3498db;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        #letters button:disabled {
+            background-color: #bdc3c7;
+            cursor: not-allowed;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="game-container">
+        <h1>Hangman Game</h1>
+
+        <!-- Game Instructions -->
+        <div class="instructions">
+            <h3>How to Play:</h3>
+            <p>Guess the word by clicking on the letters below. You have 6 incorrect guesses before the game is over!</p>
+            <p>You can also ask for a hint or toggle sounds for a better experience.</p>
+        </div>
+
+        <!-- Difficulty Selection -->
+        <div class="difficulty-selector">
+            <label for="difficulty">Choose Difficulty: </label>
+            <select id="difficulty" onchange="startGame()">
+                <option value="easy">Easy (5-6 letters)</option>
+                <option value="medium">Medium (7-8 letters)</option>
+                <option value="hard">Hard (9+ letters)</option>
+            </select>
+        </div>
+
+        <!-- Word Display -->
+        <div class="word-container">
+            <p id="wordDisplay"></p>
+        </div>
+
+        <!-- Incorrect Guesses and Timer -->
+        <div class="attempts-container">
+            <p>Incorrect guesses: <span id="incorrectGuesses">0</span>/6</p>
+            <p>Time Left: <span id="timer">60</span> seconds</p>
+        </div>
+
+        <!-- Hint Section -->
+        <div class="hint-container">
+            <button id="hintBtn" class="hint-button" onclick="giveHint()">Get Hint</button>
+        </div>
+
+        <!-- Sound Control -->
+        <div class="sound-container">
+            <button id="soundToggleBtn" class="sound-toggle" onclick="toggleSound()">Sound: ON</button>
+        </div>
+
+        <!-- Score Display -->
+        <div class="score-container">
+            <p>Score: <span id="score">0</span></p>
+        </div>
+
+        <!-- Letter Buttons -->
+        <div class="letters-container">
+            <p>Guess a letter:</p>
+            <div id="letters"></div>
+        </div>
+
+        <!-- Message Display -->
+        <div class="message-container">
+            <p id="message"></p>
+        </div>
+
+        <!-- Restart Button -->
+        <button id="restartBtn" style="display:none;" onclick="startGame()">Start New Game</button>
+    </div>
+
+    <script>
+        const wordLists = {
+            easy: ["apple", "banana", "grape", "peach", "mango","about","basis","grace"],
+            medium: ["python", "javascript", "html", "css", "node", "react","godly"],
+            hard: ["express", "typescript", "mongodb", "development", "websocket","melancholy"]
+        };
+
+        let selectedWord, wordDisplay, incorrectGuesses, guessedLetters, timerInterval, timeLeft, score, difficulty;
+        let soundOn = true;
+        let hintUsed = false;
+
+        document.addEventListener("DOMContentLoaded", () => {
+            difficulty = "easy";
+            startGame();
+        });
+
+        function startGame() {
+            clearInterval(timerInterval);
+            difficulty = document.getElementById("difficulty").value;
+            score = 0;
+            updateScoreDisplay();
+            incorrectGuesses = 0;
+            guessedLetters = [];
+            hintUsed = false;
+            timeLeft = 60;
+            document.getElementById("timer").textContent = timeLeft;
+
+            const wordPool = wordLists[difficulty];
+            selectedWord = wordPool[Math.floor(Math.random() * wordPool.length)];
+
+            wordDisplay = Array(selectedWord.length).fill("_");
+            document.getElementById("wordDisplay").textContent = wordDisplay.join(" ");
+            document.getElementById("incorrectGuesses").textContent = incorrectGuesses;
+            document.getElementById("message").textContent = "";
+            document.getElementById("restartBtn").style.display = "none";
+            document.getElementById("hintBtn").disabled = false;
+
+            createLetterButtons();
+
+            timerInterval = setInterval(updateTimer, 1000);
+
+            if (difficulty === "hard") {
+                document.body.classList.add('game-theme-dark');
+            } else {
+                document.body.classList.remove('game-theme-dark');
+                document.body.classList.add('game-theme-light');
+            }
+        }
+
+        function createLetterButtons() {
+            const lettersContainer = document.getElementById("letters");
+            lettersContainer.innerHTML = "";
+
+            const alphabet = "abcdefghijklmnopqrstuvwxyz".split("");
+
+            alphabet.forEach((letter) => {
+                const button = document.createElement("button");
+                button.textContent = letter;
+                button.addEventListener("click", () => handleGuess(letter));
+                lettersContainer.appendChild(button);
+            });
+        }
+
+        function handleGuess(letter) {
+            const buttons = document.querySelectorAll("#letters button");
+            buttons.forEach((btn) => {
+                if (btn.textContent === letter) {
+                    btn.disabled = true;
+                }
+            });
+
+            if (guessedLetters.includes(letter)) {
+                return;
+            }
+
+            guessedLetters.push(letter);
+
+            if (selectedWord.includes(letter)) {
+                updateWordDisplay(letter);
+                if (soundOn) playSound("correct");
+            } else {
+                incorrectGuesses++;
+                document.getElementById("incorrectGuesses").textContent = incorrectGuesses;
+                score--;
+                if (soundOn) playSound("incorrect");
+                updateScoreDisplay();
+            }
+
+            checkGameStatus();
+        }
+
+        function updateWordDisplay(letter) {
+            for (let i = 0; i < selectedWord.length; i++) {
+                if (selectedWord[i] === letter) {
+                    wordDisplay[i] = letter;
+                }
+            }
+            document.getElementById("wordDisplay").textContent = wordDisplay.join(" ");
+        }
+
+        function checkGameStatus() {
+            if (wordDisplay.join("") === selectedWord) {
+                document.getElementById("message").textContent = "Congratulations, you won!";
+                score += 10;
+                updateScoreDisplay();
+                clearInterval(timerInterval);
+                document.getElementById("restartBtn").style.display = "block";
+            } else if (incorrectGuesses >= 6) {
+                document.getElementById("message").textContent = `Game Over! The word was "${selectedWord}".`;
+                clearInterval(timerInterval);
+                document.getElementById("restartBtn").style.display = "block";
+            }
+        }
+
+        function updateTimer() {
+            timeLeft--;
+            document.getElementById("timer").textContent = timeLeft;
+
+            if (timeLeft <= 0) {
+                clearInterval(timerInterval);
+                document.getElementById("message").textContent = `Time's up! The word was "${selectedWord}".`;
+                document.getElementById("restartBtn").style.display = "block";
+            }
+        }
+
+        function updateScoreDisplay() {
+            document.getElementById("score").textContent = score;
+        }
+
+        function giveHint() {
+            if (!hintUsed) {
+                const hiddenLetters = wordDisplay
+                    .map((char, index) => (char === "_" ? index : null))
+                    .filter((index) => index !== null);
+
+                if (hiddenLetters.length > 0) {
+                    const randomIndex = hiddenLetters[Math.floor(Math.random() * hiddenLetters.length)];
+                    wordDisplay[randomIndex] = selectedWord[randomIndex];
+                    document.getElementById("wordDisplay").textContent = wordDisplay.join(" ");
+                    hintUsed = true;
+                    document.getElementById("hintBtn").disabled = true;
+                }
+            }
+        }
+
+        function toggleSound() {
+            soundOn = !soundOn;
+            document.getElementById("soundToggleBtn").textContent = soundOn ? "Sound: ON" : "Sound: OFF";
+        }
+
+        function playSound(type) {
+            let sound = new Audio();
+            if (type === "correct") {
+                sound.src = "correct-sound.mp3";
+            } else {
+                sound.src = "incorrect-sound.mp3";
+            }
+            sound.play();
+        }
+
+        document.getElementById("difficulty").addEventListener("change", (e) => {
+            difficulty = e.target.value;
+            startGame();
+        });
+    </script>
+</body>
+
+</html>

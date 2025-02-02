@@ -1,0 +1,35 @@
+using UnityEngine;
+using UnityEngine.XR.ARFoundation;
+using UnityEngine.XR.ARSubsystems;
+
+public class TreasureHunt : MonoBehaviour
+{
+  public ARSessionOrigin arSessionOrigin;
+  public GameObject[] treasureMarkers;
+
+  private int currentMarkerIndex = 0;
+
+  void Start()
+  {
+    // Initialize AR session
+    arSessionOrigin.session.enabled = true;
+  }
+
+  void Update()
+  {
+    // Check if a marker is detected
+    foreach (ARTrackedImage trackedImage in arSessionOrigin.session.trackedImages)
+    {
+      if (trackedImage.referenceImage.name == treasureMarkers[currentMarkerIndex].name)
+      {
+        // Move to the next marker
+        currentMarkerIndex++;
+        if (currentMarkerIndex >= treasureMarkers.Length)
+        {
+          // Game over
+          Debug.Log("Congratulations! You found all the treasures.");
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home Management with Mini Games</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+        header {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 0;
+            text-align: center;
+        }
+        .container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-around;
+            padding: 20px;
+        }
+        .section {
+            background-color: white;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            margin: 10px;
+            padding: 20px;
+            width: 30%;
+            min-width: 300px;
+        }
+        .section h2 {
+            margin-top: 0;
+        }
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+        ul li {
+            padding: 8px;
+            border-bottom: 1px solid #ddd;
+        }
+        ul li:last-child {
+            border-bottom: none;
+        }
+        input[type="text"] {
+            width: calc(100% - 22px);
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        button {
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        .game {
+            margin-top: 20px;
+        }
+        .game-board {
+            display: grid;
+            grid-template-columns: repeat(3, 100px);
+            grid-gap: 5px;
+            margin-top: 10px;
+        }
+        .game-board div {
+            width: 100px;
+            height: 100px;
+            background-color: #ddd;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            cursor: pointer;
+        }
+        .game-board div:hover {
+            background-color: #ccc;
+        }
+        .memory-game {
+            display: grid;
+            grid-template-columns: repeat(4, 100px);
+            grid-gap: 10px;
+            margin-top: 10px;
+        }
+        .memory-card {
+            width: 100px;
+            height: 100px;
+            background-color: #4CAF50;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            cursor: pointer;
+            position: relative;
+            transform-style: preserve-3d;
+            transition: transform 0.5s;
+        }
+        .memory-card.flipped {
+            transform: rotateY(180deg);
+        }
+        .memory-card .front,
+        .memory-card .back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+        }
+        .memory-card .back {
+            transform: rotateY(180deg);
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>Home Management with Mini Games</h1>
+</header>
+
+<div class="container">
+    <!-- Tasks Section -->
+    <div class="section">
+        <h2>Tasks</h2>
+        <ul id="taskList">
+            <li>Clean the kitchen</li>
+            <li>Do the laundry</li>
+            <li>Water the plants</li>
+        </ul>
+        <input type="text" id="taskInput" placeholder="Add a new task">
+        <button onclick="addTask()">Add Task</button>
+    </div>
+
+    <!-- Shopping List Section -->
+    <div class="section">
+        <h2>Shopping List</h2>
+        <ul id="shoppingList">
+            <li>Milk</li>
+            <li>Bread</li>
+            <li>Eggs</li>
+        </ul>
+        <input type="text" id="shoppingInput" placeholder="Add an item">
+        <button onclick="addShoppingItem()">Add Item</button>
+    </div>
+
+    <!-- Calendar Section -->
+    <div class="section">
+        <h2>Calendar</h2>
+        <p>Upcoming Events:</p>
+        <ul id="calendarEvents">
+            <li>Doctor's Appointment - 10/15/2023</li>
+            <li>Parent-Teacher Meeting - 10/20/2023</li>
+        </ul>
+        <input type="text" id="eventInput" placeholder="Add an event">
+        <input type="date" id="eventDate">
+        <button onclick="addEvent()">Add Event</button>
+    </div>
+
+    <!-- Mini Games Section -->
+    <div class="section">
+        <h2>Mini Games</h2>
+        <div class="game">
+            <h3>Tic-Tac-Toe</h3>
+            <div class="game-board" id="ticTacToeBoard">
+                <div data-index="0"></div>
+                <div data-index="1"></div>
+                <div data-index="2"></div>
+                <div data-index="3"></div>
+                <div data-index="4"></div>
+                <div data-index="5"></div>
+                <div data-index="6"></div>
+                <div data-index="7"></div>
+                <div data-index="8"></div>
+            </div>
+            <button onclick="resetTicTacToe()">Reset</button>
+        </div>
+
+        <div class="game">
+            <h3>Rock-Paper-Scissors</h3>
+            <button onclick="playRockPaperScissors('rock')">Rock</button>
+            <button onclick="playRockPaperScissors('paper')">Paper</button>
+            <button onclick="playRockPaperScissors('scissors')">Scissors</button>
+            <p id="rpsResult"></p>
+        </div>
+
+        <div class="game">
+            <h3>Memory Game</h3>
+            <div class="memory-game" id="memoryGame">
+                <!-- Cards will be generated dynamically -->
+            </div>
+            <button onclick="resetMemoryGame()">Reset</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Home Management Functions
+    function addTask() {
+        const taskInput = document.getElementById('taskInput');
+        const taskList = document.getElementById('taskList');
+        if (taskInput.value.trim() !== '') {
+            const li = document.createElement('li');
+            li.textContent = taskInput.value;
+            taskList.appendChild(li);
+            taskInput.value = '';
+        }
+    }
+
+    function addShoppingItem() {
+        const shoppingInput = document.getElementById('shoppingInput');
+        const shoppingList = document.getElementById('shoppingList');
+        if (shoppingInput.value.trim() !== '') {
+            const li = document.createElement('li');
+            li.textContent = shoppingInput.value;
+            shoppingList.appendChild(li);
+            shoppingInput.value = '';
+        }
+    }
+    
+    function addEvenQueryt() {
+        const eventInput = document.getElementById('eventInput');
+        const eventDate = document.getElementById('eventDate');
+        const calendarEvents = document.getElementById('calendarEvents');
+        if (eventInput.value.trim() !== '' && eventDate.value !== '') {
+            const li = document.createElement('li');
+            li.textContent = `${eventInput.value} - ${eventDate.value}`;
+            calendarEvents.appendChild(li);
+            eventInput.value = '';
+            eventDate.value = '';
+        }
+    }
+    //TODO:MAKE A FUNCTION THAT ADDS AN EVENT TO THE CALENDAR work with a time function
+    function addEvent() {
+        const eventInput = document.getElementById('eventInput');
+        const eventDate = document.getElementById('eventDate');
+        const calendarEvents = document.getElementById('calendarEvents');
+        if (eventInput.value.trim() !== '' && eventDate.value !== '') {
+            const li = document.createElement('li');
+            li.textContent = `${eventInput.value} - ${eventDate.value}`;
+            calendarEvents.appendChild(li);
+            eventInput.value = '';
+            eventDate.value = '';
+        }
+    }
+
+    // Tic-Tac-Toe Game
+    let currentPlayer = 'X';
+    let board = ['', '', '', '', '', '', '', '', ''];
+    const ticTacToeBoard = document.getElementById('ticTacToeBoard');
+
+    ticTacToeBoard.addEventListener('click', (e) => {
+        const cell = e.target;
+        const index = cell.getAttribute('data-index');
+        if (board[index] === '' && !checkWinner()) {
+            board[index] = currentPlayer;
+            cell.textContent = currentPlayer;
+            if (checkWinner()) {
+                alert(`${currentPlayer} wins!`);
+            } else if (board.every(cell => cell !== '')) {
+                alert('It\'s a draw!');
+            } else {
+                currentPlayer = currentPlayer === 'X' ? 'O' : 'X';
+            }
+        }
+    });
+
+    function checkWinner() {
+        const winningCombinations = [
+            [0, 1, 2], [3, 4, 5], [6, 7, 8], // Rows
+            [0, 3, 6], [1, 4, 7], [2, 5, 8], // Columns
+            [0, 4, 8], [2, 4, 6]             // Diagonals
+        ];
+        for (const combo of winningCombinations) {
+            if (board[combo[0]] !== '' && board[combo[0]] === board[combo[1]] && board[combo[1]] === board[combo[2]]) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    function resetTicTacToe() {
+        board = ['', '', '', '', '', '', '', '', ''];
+        currentPlayer = 'X';
+        Array.from(ticTacToeBoard.children).forEach(cell => cell.textContent = '');
+    }
+
+    // Rock-Paper-Scissors Game
+    function playRockPaperScissors(playerChoice) {
+        const choices = ['rock', 'paper', 'scissors'];
+        const computerChoice = choices[Math.floor(Math.random() * 3)];
+        let result = '';
+
+        if (playerChoice === computerChoice) {
+            result = 'It\'s a tie!';
+        } else if (
+            (playerChoice === 'rock' && computerChoice === 'scissors') ||
+            (playerChoice === 'paper' && computerChoice === 'rock') ||
+            (playerChoice === 'scissors' && computerChoice === 'paper')
+        ) {
+            result = 'You win!';
+        } else {
+            result = 'You lose!';
+        }
+
+        document.getElementById('rpsResult').textContent = `You chose ${playerChoice}, computer chose ${computerChoice}. ${result}`;
+    }
+
+    // Memory Game
+    const memoryGame = document.getElementById('memoryGame');
+    const cards = ['A', 'B', 'C', 'D', 'A', 'B', 'C', 'D'];
+    let flippedCards = [];
+    let matchedCards = [];
+
+    function createMemoryGame() {
+        cards.sort(() => Math.random() - 0.5);
+        memoryGame.innerHTML = '';
+        cards.forEach((card, index) => {
+            const memoryCard = document.createElement('div');
+            memoryCard.classList.add('memory-card');
+            memoryCard.dataset.value = card;
+            memoryCard.innerHTML = `
+                <div class="front">?</div>
+                <div class="back">${card}</div>
+            `;
+            memoryCard.addEventListener('click', flipCard);
+            memoryGame.appendChild(memoryCard);
+        });
+    }
+
+    function flipCard() {
+        if (flippedCards.length < 2 && !this.classList.contains('flipped')) {
+            this.classList.add('flipped');
+            flippedCards.push(this);
+            if (flippedCards.length === 2) {
+                checkForMatch();
+            }
+        }
+    }
+
+    function checkForMatch() {
+        const [card1, card2] = flippedCards;
+        if (card1.dataset.value === card2.dataset.value) {
+            matchedCards.push(card1, card2);
+            if (matchedCards.length === cards.length) {
+                alert('You win!');
+            }
+        } else {
+            setTimeout(() => {
+                card1.classList.remove('flipped');
+                card2.classList.remove('flipped');
+            }, 1000);
+        }
+        flippedCards = [];
+    }
+
+    function resetMemoryGame() {
+        flippedCards = [];
+        matchedCards = [];
+        createMemoryGame();
+    }
+
+    // Initialize Memory Game
+    createMemoryGame();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,10 @@
+{
+  "version": 2,
+  "dgSpecHash": "byYB17+LkZM=",
+  "success": true,
+  "projectFilePath": "C:\\Users\\mande\\Desktop\\projects\\A.A.C.S-main\\A.A.C.S-main\\Master\\AACS\\AACS.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\mande\\.nuget\\packages\\octokit\\13.0.1\\octokit.13.0.1.nupkg.sha512"
+  ],
+  "logs": []
+}

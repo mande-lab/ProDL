@@ -1,0 +1,118 @@
+/* General Styles */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f8f8f8;
+    color: #333;
+    margin: 0;
+    padding: 0;
+  }
+  
+  header {
+    background-color: #ffcc00;
+    padding: 20px;
+    text-align: center;
+  }
+  
+  header h1 {
+    margin: 0;
+    font-size: 2.5em;
+  }
+  
+  header p {
+    margin: 5px 0 0;
+    font-size: 1.2em;
+  }
+  
+  main {
+    padding: 20px;
+  }
+  
+  section {
+    margin-bottom: 40px;
+  }
+  
+  h2 {
+    font-size: 2em;
+    color: #444;
+    margin-bottom: 10px;
+  }
+  
+  .fact-container, .gallery-container, .quiz-container, .animation-container {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+  
+  /* Egg Gallery */
+  .gallery-container {
+    display: flex;
+    justify-content: space-around;
+    flex-wrap: wrap;
+  }
+  
+  .egg-image {
+    width: 150px;
+    height: 150px;
+    margin: 10px;
+    border-radius: 10px;
+    transition: transform 0.3s ease;
+  }
+  
+  .egg-image:hover {
+    transform: scale(1.1);
+  }
+  
+  /* Egg Quiz */
+  .quiz-container {
+    text-align: center;
+  }
+  
+  #quiz-questions {
+    margin-top: 20px;
+  }
+  
+  #quiz-questions input {
+    margin: 10px;
+    padding: 5px;
+    font-size: 1em;
+  }
+  
+  .hidden {
+    display: none;
+  }
+  
+  /* Egg Animation */
+  .animation-container {
+    text-align: center;
+  }
+  
+  .egg {
+    width: 100px;
+    height: 130px;
+    background-color: #ffcc00;
+    border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+    display: inline-block;
+    position: relative;
+    animation: bounce 2s infinite;
+  }
+  
+  @keyframes bounce {
+    0%, 100% {
+      transform: translateY(0);
+    }
+    50% {
+      transform: translateY(-20px);
+    }
+  }
+  
+  /* Footer */
+  footer {
+    background-color: #333;
+    color: #fff;
+    text-align: center;
+    padding: 10px;
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+  }

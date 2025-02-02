@@ -5,8 +5,8 @@
 
 This repository contains links to several of my projects. Each project demonstrates a unique aspect of my skills in web development, game development, and other areas. Below are the descriptions and links to each project.
 
-## 1. **Hangman**
-- **Description:** A classic Hangman game where the player guesses letters to figure out a hidden word before the attempts run out.
+## 1. **Wordman**
+- **Description:** A classic wordle game where the player guesses letters to figure out a hidden word before the attempts and time run out.
 - **Link:** [Hangman](https://splendorous-jelly-64057c.netlify.app/)
 
 ## 2. **Gravity Twist**

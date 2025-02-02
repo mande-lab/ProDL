@@ -7,7 +7,7 @@ This repository contains links to several of my projects. Each project demonstra
 
 ## 1. **Wordman**
 - **Description:** A classic wordle game where the player guesses letters to figure out a hidden word before the attempts and time run out.
-- **Link:** [Hangman](https://splendorous-jelly-64057c.netlify.app/)
+- **Link:** [Wordman](https://splendorous-jelly-64057c.netlify.app/)
 
 ## 2. **Gravity Twist**
 - **Description:** A gravity-based game where the player controls a character navigating through obstacles while using gravity to alter the environment.
